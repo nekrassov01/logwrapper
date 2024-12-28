@@ -12,12 +12,27 @@ import (
 type AppLogger = log.Logger
 
 // NewAppLogger creates a new logger for the application.
-func NewAppLogger(w io.Writer, level, styles, prefix string) (*AppLogger, error) {
-	l, err := newLogger(w, level, styles, prefix)
+// If level is not valid, it will use InfoLevel.
+// If styles is not valid, it will use DefaultStyles.
+func NewAppLogger(w io.Writer, level, styles, prefix string) *AppLogger {
+	lv, err := ParseLevel(level)
 	if err != nil {
-		return nil, err
+		lv = InfoLevel
 	}
-	return l, nil
+	st, err := ParseStyles(styles)
+	if err != nil {
+		st = DefaultStyles()
+	}
+	l := log.New(w)
+	l.SetLevel(lv)
+	l.SetStyles(st)
+	if level == DebugLevel.String() {
+		l.SetReportCaller(true)
+	}
+	if prefix != "" {
+		l.SetPrefix(prefix)
+	}
+	return l
 }
 
 // SDKLogger is a logger for the AWS SDK. This implemented the logging.Logger interface.
@@ -39,35 +54,8 @@ func (l *SDKLogger) Logf(c logging.Classification, format string, v ...any) {
 }
 
 // NewSDKLogger creates a new logger for AWS SDK.
-func NewSDKLogger(w io.Writer, level, styles, prefix string) (*SDKLogger, error) {
-	logger, err := newLogger(w, level, styles, prefix)
-	if err != nil {
-		return nil, err
+func NewSDKLogger(w io.Writer, level, styles, prefix string) *SDKLogger {
+	return &SDKLogger{
+		Logger: NewAppLogger(w, level, styles, prefix),
 	}
-	l := &SDKLogger{
-		Logger: logger,
-	}
-	return l, nil
-}
-
-// newLogger creates a new logger.
-func newLogger(w io.Writer, level, styles, prefix string) (*log.Logger, error) {
-	lv, err := ParseLevel(level)
-	if err != nil {
-		return nil, err
-	}
-	st, err := ParseStyles(styles)
-	if err != nil {
-		return nil, err
-	}
-	l := log.New(w)
-	l.SetLevel(lv)
-	l.SetStyles(st)
-	if level == DebugLevel.String() {
-		l.SetReportCaller(true)
-	}
-	if prefix != "" {
-		l.SetPrefix(prefix)
-	}
-	return l, nil
 }

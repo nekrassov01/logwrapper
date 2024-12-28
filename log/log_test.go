@@ -10,116 +10,104 @@ import (
 )
 
 type test struct {
-	name    string
-	level   string
-	styles  string
-	prefix  string
-	msg     string
-	want    string
-	wantErr bool
+	name   string
+	level  string
+	styles string
+	prefix string
+	msg    string
+	want   string
 }
 
 var (
 	re    = regexp.MustCompile(`log/log_test.go:\d*`)
 	tests = []test{
 		{
-			name:    "no prefix",
-			level:   "info",
-			styles:  "default",
-			prefix:  "",
-			msg:     "This is a debug message",
-			want:    "INF This is a debug message\n",
-			wantErr: false,
+			name:   "no prefix",
+			level:  "info",
+			styles: "default",
+			prefix: "",
+			msg:    "This is a debug message",
+			want:   "INF This is a debug message\n",
 		},
 		{
-			name:    "default debug",
-			level:   "debug",
-			styles:  "default",
-			prefix:  "MyApp",
-			msg:     "This is a debug message",
-			want:    "DBG <> MyApp: This is a debug message\n",
-			wantErr: false,
+			name:   "default debug",
+			level:  "debug",
+			styles: "default",
+			prefix: "MyApp",
+			msg:    "This is a debug message",
+			want:   "DBG <> MyApp: This is a debug message\n",
 		},
 		{
-			name:    "default info",
-			level:   "info",
-			styles:  "default",
-			prefix:  "MyApp",
-			msg:     "This is an infomational message",
-			want:    "INF MyApp: This is an infomational message\n",
-			wantErr: false,
+			name:   "default info",
+			level:  "info",
+			styles: "default",
+			prefix: "MyApp",
+			msg:    "This is an infomational message",
+			want:   "INF MyApp: This is an infomational message\n",
 		},
 		{
-			name:    "default warn",
-			level:   "warn",
-			styles:  "default",
-			prefix:  "MyApp",
-			msg:     "This is a warning message",
-			want:    "WRN MyApp: This is a warning message\n",
-			wantErr: false,
+			name:   "default warn",
+			level:  "warn",
+			styles: "default",
+			prefix: "MyApp",
+			msg:    "This is a warning message",
+			want:   "WRN MyApp: This is a warning message\n",
 		},
 		{
-			name:    "default error",
-			level:   "error",
-			styles:  "default",
-			prefix:  "MyApp",
-			msg:     "This is an error message",
-			want:    "ERR MyApp: This is an error message\n",
-			wantErr: false,
+			name:   "default error",
+			level:  "error",
+			styles: "default",
+			prefix: "MyApp",
+			msg:    "This is an error message",
+			want:   "ERR MyApp: This is an error message\n",
 		},
 		{
-			name:    "labeled debug",
-			level:   "debug",
-			styles:  "labeled",
-			prefix:  "MyApp",
-			msg:     "This is a debug message",
-			want:    " DBG  <> MyApp: This is a debug message\n",
-			wantErr: false,
+			name:   "labeled debug",
+			level:  "debug",
+			styles: "labeled",
+			prefix: "MyApp",
+			msg:    "This is a debug message",
+			want:   " DBG  <> MyApp: This is a debug message\n",
 		},
 		{
-			name:    "labeled info",
-			level:   "info",
-			styles:  "labeled",
-			prefix:  "MyApp",
-			msg:     "This is an infomational message",
-			want:    " INF  MyApp: This is an infomational message\n",
-			wantErr: false,
+			name:   "labeled info",
+			level:  "info",
+			styles: "labeled",
+			prefix: "MyApp",
+			msg:    "This is an infomational message",
+			want:   " INF  MyApp: This is an infomational message\n",
 		},
 		{
-			name:    "labeled warn",
-			level:   "warn",
-			styles:  "labeled",
-			prefix:  "MyApp",
-			msg:     "This is a warning message",
-			want:    " WRN  MyApp: This is a warning message\n",
-			wantErr: false,
+			name:   "labeled warn",
+			level:  "warn",
+			styles: "labeled",
+			prefix: "MyApp",
+			msg:    "This is a warning message",
+			want:   " WRN  MyApp: This is a warning message\n",
 		},
 		{
-			name:    "labeled error",
-			level:   "error",
-			styles:  "labeled",
-			prefix:  "MyApp",
-			msg:     "This is an error message",
-			want:    " ERR  MyApp: This is an error message\n",
-			wantErr: false,
+			name:   "labeled error",
+			level:  "error",
+			styles: "labeled",
+			prefix: "MyApp",
+			msg:    "This is an error message",
+			want:   " ERR  MyApp: This is an error message\n",
 		},
 		{
-			name:    "invalid level",
-			level:   "invalid level",
-			styles:  "default",
-			prefix:  "MyApp",
-			msg:     "",
-			want:    "",
-			wantErr: true,
+			name:   "invalid level",
+			level:  "invalid level",
+			styles: "default",
+			prefix: "MyApp",
+			msg:    "This is a fallback message",
+			want:   "INF MyApp: This is a fallback message\n",
 		},
 		{
-			name:    "invalid styles",
-			level:   "info",
-			styles:  "invalid styles",
-			prefix:  "MyApp",
-			msg:     "",
-			want:    "",
-			wantErr: true,
+			name:   "invalid styles",
+			level:  "info",
+			styles: "invalid styles",
+			prefix: "MyApp",
+			msg:    "This is a fallback message",
+			want:   "INF MyApp: This is a fallback message\n",
 		},
 	}
 )
@@ -128,14 +116,7 @@ func TestNewAppLogger(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			w := &bytes.Buffer{}
-			l, err := NewAppLogger(w, tt.level, tt.styles, tt.prefix)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("NewAppLogger() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if tt.wantErr {
-				return
-			}
+			l := NewAppLogger(w, tt.level, tt.styles, tt.prefix)
 			switch tt.level {
 			case "debug":
 				l.Debug(tt.msg)
@@ -145,6 +126,8 @@ func TestNewAppLogger(t *testing.T) {
 				l.Warn(tt.msg)
 			case "error":
 				l.Error(tt.msg)
+			default:
+				l.Info(tt.msg)
 			}
 			got := re.ReplaceAllString(w.String(), "")
 			if got != tt.want {
@@ -158,14 +141,7 @@ func TestNewSDKLogger(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			w := &bytes.Buffer{}
-			l, err := NewSDKLogger(w, tt.level, tt.styles, tt.prefix)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("NewSDKLogger() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if tt.wantErr {
-				return
-			}
+			l := NewSDKLogger(w, tt.level, tt.styles, tt.prefix)
 			switch tt.level {
 			case "debug":
 				l.Debug(tt.msg)
@@ -175,6 +151,8 @@ func TestNewSDKLogger(t *testing.T) {
 				l.Warn(tt.msg)
 			case "error":
 				l.Error(tt.msg)
+			default:
+				l.Info(tt.msg)
 			}
 			got := re.ReplaceAllString(w.String(), "")
 			if got != tt.want {
@@ -189,14 +167,7 @@ func Test_newLogger(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			w := &bytes.Buffer{}
-			l, err := NewSDKLogger(w, tt.level, tt.styles, tt.prefix)
-			if (err != nil) != tt.wantErr {
-				t.Errorf("NewSDKLogger() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-			if tt.wantErr {
-				return
-			}
+			l := NewSDKLogger(w, tt.level, tt.styles, tt.prefix)
 			switch tt.level {
 			case "debug":
 				l.Debug(tt.msg)
@@ -206,6 +177,8 @@ func Test_newLogger(t *testing.T) {
 				l.Warn(tt.msg)
 			case "error":
 				l.Error(tt.msg)
+			default:
+				l.Info(tt.msg)
 			}
 			got := re.ReplaceAllString(w.String(), "")
 			if got != tt.want {
