@@ -76,8 +76,6 @@ func newLogger(w io.Writer, level, styles, prefix string) (*log.Logger, error) {
 // Level is a logging level.
 type Level = log.Level
 
-var InfoLevel = log.InfoLevel
-
 // Styles is a set of styles.
 type Styles = log.Styles
 
