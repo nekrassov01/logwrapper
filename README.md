@@ -42,8 +42,10 @@ func main() {
 Using
 -----
 
-[github.com/charmbracelet/log](https://github.com/charmbracelet/log)
-[github.com/aws/smithy-go](https://github.com/aws/smithy-go)
+Wraps the following:
+
+- [github.com/charmbracelet/log](https://github.com/charmbracelet/log)
+- [github.com/aws/smithy-go](https://github.com/aws/smithy-go)
 
 Author
 ------
