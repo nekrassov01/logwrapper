@@ -6,37 +6,35 @@ logwrapper
 [![Go Reference](https://pkg.go.dev/badge/github.com/nekrassov01/logwrapper.svg)](https://pkg.go.dev/github.com/nekrassov01/logwrapper)
 [![Go Report Card](https://goreportcard.com/badge/github.com/nekrassov01/logwrapper)](https://goreportcard.com/report/github.com/nekrassov01/logwrapper)
 
-Small, thin wrapper for logging in Go and AWS SDK
+Small, thin wrapper for logging with Go and AWS SDK
 
 Example
 -------
 
 ```go
-var logger *log.AppLogger
-
-func main() {
-	// Create global logger for the application
-	l, err := log.NewAppLogger(os.Stderr, "debug", "default", "MyApp")
-	if err != nil {
-		panic(err)
-	}
-	logger = l
-
-	...
-
-	// Create logger for AWS SDK called through the application
-	s, err := log.NewSDKLogger(os.Stderr, "debug", "default", "SDK")
-	if err != nil {
-		panic(err)
-	}
-	cfg, err := config.LoadDefaultConfig(context.Background(), config.WithLogger(s))
-	if err != nil {
-		panic(err)
-	}
-
-	...
+// Parse log level
+level, err := log.ParseLevel("debug")
+if err != nil {
+	return err
 }
 
+// Parse log styles
+styles, err := log.ParseStyles("labeled")
+if err != nil {
+	return err
+}
+
+// Create logger for the application
+appLogger := log.NewAppLogger(os.Stderr, level, styles, "MyApp")
+
+// Create logger for AWS SDK called through the application
+sdkLogger := log.NewSDKLogger(os.Stderr, level, styles, "SDK")
+cfg, err := config.LoadDefaultConfig(context.Background(), config.WithLogger(sdkLogger))
+if err != nil {
+	return err
+}
+
+...
 ```
 
 Using
