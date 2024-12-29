@@ -11,8 +11,8 @@ import (
 
 type test struct {
 	name   string
-	level  string
-	styles string
+	level  Level
+	styles *Styles
 	prefix string
 	msg    string
 	want   string
@@ -23,91 +23,75 @@ var (
 	tests = []test{
 		{
 			name:   "no prefix",
-			level:  "info",
-			styles: "default",
+			level:  InfoLevel,
+			styles: DefaultStyles(),
 			prefix: "",
 			msg:    "This is a debug message",
 			want:   "INF This is a debug message\n",
 		},
 		{
 			name:   "default debug",
-			level:  "debug",
-			styles: "default",
+			level:  DebugLevel,
+			styles: DefaultStyles(),
 			prefix: "MyApp",
 			msg:    "This is a debug message",
 			want:   "DBG <> MyApp: This is a debug message\n",
 		},
 		{
 			name:   "default info",
-			level:  "info",
-			styles: "default",
+			level:  InfoLevel,
+			styles: DefaultStyles(),
 			prefix: "MyApp",
 			msg:    "This is an infomational message",
 			want:   "INF MyApp: This is an infomational message\n",
 		},
 		{
 			name:   "default warn",
-			level:  "warn",
-			styles: "default",
+			level:  WarnLevel,
+			styles: DefaultStyles(),
 			prefix: "MyApp",
 			msg:    "This is a warning message",
 			want:   "WRN MyApp: This is a warning message\n",
 		},
 		{
 			name:   "default error",
-			level:  "error",
-			styles: "default",
+			level:  ErrorLevel,
+			styles: DefaultStyles(),
 			prefix: "MyApp",
 			msg:    "This is an error message",
 			want:   "ERR MyApp: This is an error message\n",
 		},
 		{
 			name:   "labeled debug",
-			level:  "debug",
-			styles: "labeled",
+			level:  DebugLevel,
+			styles: LabeledStyles(),
 			prefix: "MyApp",
 			msg:    "This is a debug message",
 			want:   " DBG  <> MyApp: This is a debug message\n",
 		},
 		{
 			name:   "labeled info",
-			level:  "info",
-			styles: "labeled",
+			level:  InfoLevel,
+			styles: LabeledStyles(),
 			prefix: "MyApp",
 			msg:    "This is an infomational message",
 			want:   " INF  MyApp: This is an infomational message\n",
 		},
 		{
 			name:   "labeled warn",
-			level:  "warn",
-			styles: "labeled",
+			level:  WarnLevel,
+			styles: LabeledStyles(),
 			prefix: "MyApp",
 			msg:    "This is a warning message",
 			want:   " WRN  MyApp: This is a warning message\n",
 		},
 		{
 			name:   "labeled error",
-			level:  "error",
-			styles: "labeled",
+			level:  ErrorLevel,
+			styles: LabeledStyles(),
 			prefix: "MyApp",
 			msg:    "This is an error message",
 			want:   " ERR  MyApp: This is an error message\n",
-		},
-		{
-			name:   "invalid level",
-			level:  "invalid level",
-			styles: "default",
-			prefix: "MyApp",
-			msg:    "This is a fallback message",
-			want:   "INF MyApp: This is a fallback message\n",
-		},
-		{
-			name:   "invalid styles",
-			level:  "info",
-			styles: "invalid styles",
-			prefix: "MyApp",
-			msg:    "This is a fallback message",
-			want:   "INF MyApp: This is a fallback message\n",
 		},
 	}
 )
@@ -118,13 +102,13 @@ func TestNewAppLogger(t *testing.T) {
 			w := &bytes.Buffer{}
 			l := NewAppLogger(w, tt.level, tt.styles, tt.prefix)
 			switch tt.level {
-			case "debug":
+			case DebugLevel:
 				l.Debug(tt.msg)
-			case "info":
+			case InfoLevel:
 				l.Info(tt.msg)
-			case "warn":
+			case WarnLevel:
 				l.Warn(tt.msg)
-			case "error":
+			case ErrorLevel:
 				l.Error(tt.msg)
 			default:
 				l.Info(tt.msg)
@@ -143,13 +127,13 @@ func TestNewSDKLogger(t *testing.T) {
 			w := &bytes.Buffer{}
 			l := NewSDKLogger(w, tt.level, tt.styles, tt.prefix)
 			switch tt.level {
-			case "debug":
+			case DebugLevel:
 				l.Debug(tt.msg)
-			case "info":
+			case InfoLevel:
 				l.Info(tt.msg)
-			case "warn":
+			case WarnLevel:
 				l.Warn(tt.msg)
-			case "error":
+			case ErrorLevel:
 				l.Error(tt.msg)
 			default:
 				l.Info(tt.msg)
@@ -169,13 +153,13 @@ func Test_newLogger(t *testing.T) {
 			w := &bytes.Buffer{}
 			l := NewSDKLogger(w, tt.level, tt.styles, tt.prefix)
 			switch tt.level {
-			case "debug":
+			case DebugLevel:
 				l.Debug(tt.msg)
-			case "info":
+			case InfoLevel:
 				l.Info(tt.msg)
-			case "warn":
+			case WarnLevel:
 				l.Warn(tt.msg)
-			case "error":
+			case ErrorLevel:
 				l.Error(tt.msg)
 			default:
 				l.Info(tt.msg)

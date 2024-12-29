@@ -12,21 +12,11 @@ import (
 type AppLogger = log.Logger
 
 // NewAppLogger creates a new logger for the application.
-// If level is not valid, it will use InfoLevel.
-// If styles is not valid, it will use DefaultStyles.
-func NewAppLogger(w io.Writer, level, styles, prefix string) *AppLogger {
-	lv, err := ParseLevel(level)
-	if err != nil {
-		lv = InfoLevel
-	}
-	st, err := ParseStyles(styles)
-	if err != nil {
-		st = DefaultStyles()
-	}
+func NewAppLogger(w io.Writer, level Level, styles *Styles, prefix string) *AppLogger {
 	l := log.New(w)
-	l.SetLevel(lv)
-	l.SetStyles(st)
-	if level == DebugLevel.String() {
+	l.SetLevel(level)
+	l.SetStyles(styles)
+	if level == DebugLevel {
 		l.SetReportCaller(true)
 	}
 	if prefix != "" {
@@ -54,7 +44,7 @@ func (l *SDKLogger) Logf(c logging.Classification, format string, v ...any) {
 }
 
 // NewSDKLogger creates a new logger for AWS SDK.
-func NewSDKLogger(w io.Writer, level, styles, prefix string) *SDKLogger {
+func NewSDKLogger(w io.Writer, level Level, styles *Styles, prefix string) *SDKLogger {
 	return &SDKLogger{
 		Logger: NewAppLogger(w, level, styles, prefix),
 	}
