@@ -16,9 +16,7 @@ func NewAppLogger(w io.Writer, level Level, styles *Styles, prefix string) *AppL
 	l := log.New(w)
 	l.SetLevel(level)
 	l.SetStyles(styles)
-	if level == DebugLevel {
-		l.SetReportCaller(true)
-	}
+	l.SetReportCaller(level == DebugLevel)
 	if prefix != "" {
 		l.SetPrefix(prefix)
 	}
@@ -26,7 +24,7 @@ func NewAppLogger(w io.Writer, level Level, styles *Styles, prefix string) *AppL
 }
 
 // SDKLogger is a logger for the AWS SDK. This implemented the logging.Logger interface.
-// https://github.com/aws/smithy-go/blob/main/logging/logger.go
+// See: https://github.com/aws/smithy-go/blob/main/logging/logger.go
 type SDKLogger struct {
 	*log.Logger
 }
