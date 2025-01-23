@@ -19,9 +19,3 @@ var (
 func ParseLevel(level string) (Level, error) {
 	return log.ParseLevel(level)
 }
-
-// SetLevel sets the logging level. If level is DebugLevel, it will also report caller implicitly.
-func SetLevel(level Level) {
-	log.SetLevel(level)
-	log.SetReportCaller(level == DebugLevel)
-}
