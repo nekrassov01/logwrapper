@@ -219,13 +219,13 @@ func TestSDKLogger_Logf(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			w := &bytes.Buffer{}
-			logger := func() *log.Logger {
+			logger := func() *baseLogger {
 				l := log.New(w)
 				l.SetLevel(tt.fields.Logger.GetLevel())
 				l.SetStyles(DefaultStyles())
-				return l
+				return &baseLogger{l}
 			}
-			l := &SDKLogger{Logger: logger()}
+			l := &SDKLogger{baseLogger: logger()}
 			l.Logf(tt.args.c, tt.args.format, tt.args.v...)
 			got := re.ReplaceAllString(w.String(), "")
 			if got != tt.want {
